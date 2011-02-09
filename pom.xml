@@ -8,6 +8,9 @@
     <packaging>jar</packaging>
 
     <name>authorised-cas-proxy</name>
+    <description>
+    A proxy for a CAS protected resource, enabling access from a local url.
+    </description>
     <url>https://github.com/timp21337/authorised-cas-proxy</url>
 
     <properties>
@@ -66,8 +69,44 @@
           </execution>
         </executions>
       </plugin>
+    <plugin>
+     <groupId>org.codehaus.mojo</groupId>
+     <artifactId>cobertura-maven-plugin</artifactId>
+     <!--version>2.0</version-->
+     <executions>
+       <execution>
+         <id>c</id>
+         <phase>clean</phase>
+         <goals>
+           <goal>clean</goal>
+         </goals>
+       </execution>
+       <execution>
+         <id>t</id>
+         <phase>test</phase>
+         <goals>
+           <goal>cobertura</goal>
+         </goals>
+       </execution>
+       <execution>
+         <id>p</id>
+         <phase>prepare-package</phase>
+         <goals>
+           <goal>dump-datafile</goal>
+         </goals>
+       </execution>
+     </executions>
+    </plugin>
 
     </plugins>
   </build>
-    
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+
 </project>
