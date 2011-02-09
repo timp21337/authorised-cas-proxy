@@ -1,0 +1,12 @@
+A proxy for a CAS protected resource, enabling single url access.
+
+mvn clean install
+
+java -jar authorised-cas-proxy-1.0.jar -user adam@example.org -password bar -host cloud1.cggh.org -ticketGrantingServiceUrlhttp://cloud1.cggh.org/sso/v1/tickets
+
+http://localhost:7777/repository/service/content/studies/QXBQG
+
+now returns the contents of 
+
+http://cloud1.cggh.org/repository/service/content/studies/QXBQG
+
