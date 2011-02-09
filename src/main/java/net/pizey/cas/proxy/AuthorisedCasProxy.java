@@ -23,6 +23,7 @@ public class AuthorisedCasProxy {
     public static final int HTTP_BAD_METHOD = 405;
 
     static boolean keepGoing = true;
+    private static int port;
 
     protected static void log(String s) {
         System.out.println(s);
@@ -44,14 +45,7 @@ public class AuthorisedCasProxy {
 
     public static void main(String[] args) throws Exception {
         configure(args);
-        root = new File(System.getProperty("user.dir"));
-        timeout = 5000;
-        workers = 5;
-        int port = 7777;
-        log("root=" + root);
-        log("timeout=" + timeout);
-        log("workers=" + workers);
-        log("port=" + port);
+
         /* start worker threads */
         for (int i = 0; i < workers; ++i) {
             ProxyWorker w = new ProxyWorker();
@@ -83,8 +77,17 @@ public class AuthorisedCasProxy {
 
     public static void stop() {
       keepGoing = false;
+      for (ProxyWorker pw : threads) {
+          System.err.println("Stopping " + pw);
+          pw.notify();
+      }
     }
     public static void configure(String[] args) throws ParseException {
+
+        root = new File(System.getProperty("user.dir"));
+        timeout = 5000;
+        workers = 5;
+        port = 7777;
 
         Options options = new Options();
 
@@ -103,10 +106,6 @@ public class AuthorisedCasProxy {
         p.setRequired(true);
         options.addOption(p);
 
-        Option r = new Option("resource", true, "The resource url, optional");
-
-        options.addOption(r);
-
 
         // create the parser
         CommandLineParser parser = new GnuParser();
@@ -116,6 +115,15 @@ public class AuthorisedCasProxy {
         ticketGrantingServiceUrl = line.getOptionValue("ticketGrantingServiceUrl");
         user = line.getOptionValue("user");
         password = line.getOptionValue("password");
+
+        log("root=" + root);
+        log("timeout=" + timeout);
+        log("workers=" + workers);
+        log("port=" + port);
+        log("host=" + host);
+        log("user=" + user);
+        log("password=****");
+        log("ticketGrantingServiceUrl=" + ticketGrantingServiceUrl);
 
     }
 }

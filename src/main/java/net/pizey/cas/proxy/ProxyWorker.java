@@ -42,7 +42,7 @@ public class ProxyWorker extends AuthorisedCasProxy implements Runnable {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            /* go back in wait queue if there'socket fewer
+            /* go back in wait queue if there's fewer
             * than numHandler connections.
             */
             socket = null;
@@ -198,7 +198,7 @@ public class ProxyWorker extends AuthorisedCasProxy implements Runnable {
                     ct = (String) map.get(name.substring(ind));
                 }
                 if (ct == null) {
-                    ct = "unknown/unknown";
+                    ct = "text/plain";
                 }
                 ps.print("Content-type: " + ct);
                 ps.write(EOL);

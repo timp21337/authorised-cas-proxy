@@ -31,13 +31,6 @@ public class AuthorisedCasProxyTest
         return new TestSuite( AuthorisedCasProxyTest.class );
     }
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
-    }
 
     public void testCLI() throws Exception {
       AuthorisedCasProxy it = new AuthorisedCasProxy();
@@ -60,11 +53,8 @@ public class AuthorisedCasProxyTest
         e = null;
       }
         it.configure(new String [] {"-user", "adam@example.org", "-password", "bar", "-host", "cloud1.cggh.org", "-ticketGrantingServiceUrl", "http://cloud1.cggh.org/sso/v1/tickets"});
-        it.stop();
-    
+
     }
-
-
 
 
 }
