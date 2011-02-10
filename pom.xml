@@ -13,6 +13,55 @@
     </description>
     <url>https://github.com/timp21337/authorised-cas-proxy</url>
 
+  
+  <scm>
+    <connection>
+      scm:git:git://github.com:timp21337/authorised-cas-proxy.git
+    </connection>
+
+    <url>
+      https://github.com/timp21337/authorised-cas-proxy
+    </url>
+  </scm>
+  <ciManagement>
+    <system>Jenkins</system>
+    <url>http://jenkins.paneris.net/</url>
+  </ciManagement>
+
+  <issueManagement>
+   <system>GITHub</system>
+    <url>
+https://github.com/timp21337/authorised-cas-proxy/issues
+    </url>
+  </issueManagement>
+
+  <licenses>
+   <license>
+    <name>Apache Software License, Version 2.0</name>
+    <url>
+     http://www.apache.org/licenses/LICENSE-2.0.txt
+    </url>
+    <distribution>repo</distribution>
+   </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Tim Pizey</name>
+      <id>timp21337</id>
+      <email>timp AT paneris.net</email>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>0</timezone>
+      <url>http://pizey.net/~timp</url>
+    </developer>
+  </developers>
+
+
+  <url>https://github.com/timp21337/authorised-cas-proxy</url>
+    
+    
     <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
