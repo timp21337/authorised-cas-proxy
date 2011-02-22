@@ -7,6 +7,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 public class ProxyWorker extends AuthorisedCasProxy implements Runnable {
+
     final static int BUF_SIZE = 2048;
 
     static final byte[] EOL = {(byte) '\r', (byte) '\n'};
@@ -40,7 +41,7 @@ public class ProxyWorker extends AuthorisedCasProxy implements Runnable {
             try {
                 handleClient();
             } catch (Exception e) {
-                e.printStackTrace();
+                handleException(e);
             }
             /* go back in wait queue if there's fewer
             * than numHandler connections.
@@ -58,9 +59,13 @@ public class ProxyWorker extends AuthorisedCasProxy implements Runnable {
         }
     }
 
+    private void handleException(Exception e) {
+        e.printStackTrace();
+    }
+
     void handleClient() throws IOException {
         InputStream is = new BufferedInputStream(socket.getInputStream());
-        PrintStream ps = new PrintStream(socket.getOutputStream());
+        PrintStream responsePrintStream = new PrintStream(socket.getOutputStream());
         /* we will only block in read for this many milliseconds
         * before we fail with java.io.InterruptedIOException,
         * at which point we will abandon the connection.
@@ -115,11 +120,12 @@ public class ProxyWorker extends AuthorisedCasProxy implements Runnable {
                 index = 5;
             } else {
                 /* we don't support this method */
-                ps.print("HTTP/1.0 " + HTTP_BAD_METHOD +
+
+                responsePrintStream.print("HTTP/1.0 " + HTTP_BAD_METHOD +
                         " unsupported method type: ");
-                ps.write(buf, 0, 5);
-                ps.write(EOL);
-                ps.flush();
+                responsePrintStream.write(buf, 0, 5);
+                responsePrintStream.write(EOL);
+                responsePrintStream.flush();
                 socket.close();
                 return;
             }
@@ -135,29 +141,28 @@ public class ProxyWorker extends AuthorisedCasProxy implements Runnable {
                 }
             }
 
-            String relativeUrl = new String(buf, index, i - index, "UTF8");
+            String relativeUrl = new String(buf, index, i - index, "UTF-8");
             log("Relative url:" + relativeUrl + ":");
             String targetUrl = "http://" + host + relativeUrl;
-            String fname = CasProtectedResourceDownloader.download(targetUrl);
-            //String fname = (new String(buf, 0, index,
-            //        i - index)).replace('/', File.separatorChar);
-            if (fname.startsWith(File.separator)) {
-                fname = fname.substring(1);
-            }
-            File target = new File(AuthorisedCasProxy.root, fname);
-            if (target.isDirectory()) {
-                File ind = new File(target, "index.html");
-                if (ind.exists()) {
-                    target = ind;
-                }
-            }
-            boolean OK = printHeaders(target, ps);
-            if (doingGet) {
-                if (OK) {
-                    sendFile(target, ps);
-                } else {
-                    send404(target, ps);
-                }
+
+
+            Tuple t = new CasProtectedResourceDownloader().download(targetUrl);
+            System.err.println("Status:"+t.status);
+            System.err.println("target:"+t.file);
+            if (t.status != HTTP_OK)
+                if (t.status == HTTP_NOT_FOUND)
+                    send404(responsePrintStream);
+                else
+                    sendException(responsePrintStream, new RuntimeException("Unexpected status " + t.status));
+
+            if (!t.file.exists()) {
+                send404(responsePrintStream);
+            } else {
+
+              printHeaders(t.file, responsePrintStream);
+              if (doingGet) {
+                  sendFile(t.file, responsePrintStream);
+              }
             }
         } finally {
             socket.close();
@@ -167,17 +172,10 @@ public class ProxyWorker extends AuthorisedCasProxy implements Runnable {
     boolean printHeaders(File target, PrintStream ps) throws IOException {
         boolean ret;
         int rCode;
-        if (!target.exists()) {
-            rCode = HTTP_NOT_FOUND;
-            ps.print("HTTP/1.0 " + HTTP_NOT_FOUND + " not found");
-            ps.write(EOL);
-            ret = false;
-        } else {
-            rCode = HTTP_OK;
-            ps.print("HTTP/1.0 " + HTTP_OK + " OK");
-            ps.write(EOL);
-            ret = true;
-        }
+        rCode = HTTP_OK;
+        ps.print("HTTP/1.0 " + HTTP_OK + " OK");
+        ps.write(EOL);
+        ret = true;
         log("From " + socket.getInetAddress().getHostAddress() + ": GET " +
                 target.getAbsolutePath() + "-->" + rCode);
         ps.print("Server: Simple java");
@@ -210,11 +208,22 @@ public class ProxyWorker extends AuthorisedCasProxy implements Runnable {
         return ret;
     }
 
-    void send404(File targ, PrintStream ps) throws IOException {
+    void send404(PrintStream ps) throws IOException {
+        ps.print("HTTP/1.0 " + HTTP_NOT_FOUND + " not found");
+        ps.write(EOL);
         ps.write(EOL);
         ps.write(EOL);
         ps.println("Not Found\n\n" +
                 "The requested resource was not found.\n");
+    }
+
+    private void sendException(PrintStream ps, RuntimeException unexpected) throws IOException {
+        ps.print("HTTP/1.0 " + HTTP_SERVER_ERROR + " not found");
+        ps.write(EOL);
+        ps.write(EOL);
+        ps.write(EOL);
+        ps.println("Server Error \n\n" +
+                unexpected.getMessage() + "\n");
     }
 
     void sendFile(File targ, PrintStream ps) throws IOException {
@@ -222,7 +231,6 @@ public class ProxyWorker extends AuthorisedCasProxy implements Runnable {
         ps.write(EOL);
 
         is = new FileInputStream(targ.getAbsolutePath());
-
 
         try {
             int n;
@@ -270,6 +278,5 @@ public class ProxyWorker extends AuthorisedCasProxy implements Runnable {
         setSuffix(".txt", "text/plain");
         setSuffix(".java", "text/plain");
     }
-
 
 }
