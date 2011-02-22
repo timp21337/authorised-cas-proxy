@@ -21,6 +21,7 @@ public class AuthorisedCasProxy {
     public static final int HTTP_OK = 200;
     public static final int HTTP_NOT_FOUND = 404;
     public static final int HTTP_BAD_METHOD = 405;
+    public static final int HTTP_SERVER_ERROR = 500;
 
     static boolean keepGoing = true;
     private static int port;
