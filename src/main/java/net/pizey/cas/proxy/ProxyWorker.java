@@ -107,6 +107,7 @@ public class ProxyWorker extends AuthorisedCasProxy implements Runnable {
 
       /* are we doing a GET or just a HEAD */
       boolean doingGet;
+      String method = "";
       /* beginning of file name */
       int index;
       if (buf[0] == (byte)'G' &&
@@ -115,13 +116,30 @@ public class ProxyWorker extends AuthorisedCasProxy implements Runnable {
                     buf[3] == (byte)' ') {
         doingGet = true;
         index = 4;
+        method = "GET";
       } else if (buf[0] == (byte)'H' &&
-                    buf[1] == (byte)'E' &&
-                    buf[2] == (byte)'A' &&
-                    buf[3] == (byte)'D' &&
-                    buf[4] == (byte)' ') {
+          buf[1] == (byte)'E' &&
+          buf[2] == (byte)'A' &&
+          buf[3] == (byte)'D' &&
+          buf[4] == (byte)' ') {
         doingGet = false;
         index = 5;
+        method = "HEAD";
+      } else if (buf[0] == (byte)'P' &&
+          buf[1] == (byte)'O' &&
+          buf[2] == (byte)'S' &&
+          buf[3] == (byte)'T' &&
+          buf[4] == (byte)' ') {
+        doingGet = false;
+        index = 5;
+        method = "POST";
+      } else if (buf[0] == (byte)'P' &&
+          buf[1] == (byte)'U' &&
+          buf[3] == (byte)'T' &&
+          buf[4] == (byte)' ') {
+        doingGet = false;
+        index = 4;
+        method = "PUT";
       } else {
         /* we don't support this method */
 
@@ -144,14 +162,13 @@ public class ProxyWorker extends AuthorisedCasProxy implements Runnable {
           break;
         }
       }
-
       String relativeUrl = new String(buf, index, i - index, "UTF-8");
-      log("Relative url:" + relativeUrl + ":");
+      log(method + " " + relativeUrl + ":");
       String targetUrl = "http://" + host + relativeUrl;
 
       Tuple t = new CasProtectedResourceDownloader().download(targetUrl);
-      System.err.println("Status:" + t.status);
-      System.err.println("target:" + t.file);
+      log("Status:" + t.status);
+      log("target:" + t.file);
       if (t.status != HTTP_OK)
         if (t.status == HTTP_NOT_FOUND)
           send404(responsePrintStream);
