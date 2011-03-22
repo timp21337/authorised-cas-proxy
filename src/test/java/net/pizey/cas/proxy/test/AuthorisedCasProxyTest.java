@@ -54,4 +54,11 @@ public class AuthorisedCasProxyTest
 
   }
 
+  public void testStopWhenNotStarted() throws Exception {
+    
+    AuthorisedCasProxy.configure(new String[] { "-port", "7777", "-user", "adam@example.org", "-password", "bar", "-host", "cloud1.cggh.org", "-ticketGrantingServiceUrl", "http://cloud1.cggh.org/sso/v1/tickets" });
+    
+    AuthorisedCasProxy.stop();
+    
+  }
 }
