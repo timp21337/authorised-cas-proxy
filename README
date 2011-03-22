@@ -2,7 +2,7 @@ A proxy for a CAS protected resource, enabling access from a local url.
 
 mvn clean install
 
-java -jar target\authorised-cas-proxy-1.0-jar-with-dependencies.jar -user adam@example.org -password bar -host cloud1.cggh.org -ticketGrantingServiceUrl http://cloud1.cggh.org/sso/v1/tickets
+java -jar target/authorised-cas-proxy-1.0-jar-with-dependencies.jar -user adam@example.org -password bar -host cloud1.cggh.org -ticketGrantingServiceUrl http://cloud1.cggh.org/sso/v1/tickets
 
 http://localhost:7777/repository/service/content/studies/QXBQG
 
