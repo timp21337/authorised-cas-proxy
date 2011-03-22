@@ -51,8 +51,14 @@ public class AuthorisedCasProxy {
   static int workers = 5;
 
   public static void main(String[] args) throws Exception {
+
     configure(args);
 
+    start();
+
+  }
+
+  public static void start() throws Exception {
     /* start worker threads */
     for (int i = 0; i < workers; ++i) {
       ProxyWorker w = new ProxyWorker();
@@ -79,7 +85,6 @@ public class AuthorisedCasProxy {
         }
       }
     }
-
   }
 
   public static void stop() {
