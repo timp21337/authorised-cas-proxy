@@ -49,6 +49,8 @@ public class AuthorisedCasProxyTest
       e = null;
     }
     AuthorisedCasProxy.configure(new String[] { "-user", "adam@example.org", "-password", "bar", "-host", "cloud1.cggh.org", "-ticketGrantingServiceUrl", "http://cloud1.cggh.org/sso/v1/tickets" });
+    
+    AuthorisedCasProxy.configure(new String[] { "-port", "7777", "-user", "adam@example.org", "-password", "bar", "-host", "cloud1.cggh.org", "-ticketGrantingServiceUrl", "http://cloud1.cggh.org/sso/v1/tickets" });
 
   }
 
