@@ -27,6 +27,9 @@ public class AuthorisedCasProxy {
   public static final int HTTP_NOT_FOUND = 404;
   public static final int HTTP_BAD_METHOD = 405;
   public static final int HTTP_SERVER_ERROR = 500;
+  private static final int DEFAULT_LOCAL_PORT = 7777;
+  private static final int DEFAULT_TIMEOUT_MILLIS = 5000;
+  private static final int DEFAULT_WORKER_COUNT = 5;
 
   static boolean keepGoing = true;
   private static int port;
@@ -90,9 +93,8 @@ public class AuthorisedCasProxy {
   public static void configure(String[] args) throws ParseException {
 
     root = new File(System.getProperty("user.dir"));
-    timeout = 5000;
-    workers = 5;
-    port = 7777;
+    timeout = DEFAULT_TIMEOUT_MILLIS;
+    workers = DEFAULT_WORKER_COUNT;
 
     Options options = new Options();
 
@@ -127,6 +129,8 @@ public class AuthorisedCasProxy {
     String portOptionValue = line.getOptionValue("port");
     if (portOptionValue != null)
       port = new Integer(portOptionValue).intValue();
+    else
+      port = DEFAULT_LOCAL_PORT;      
 
     log("root=" + root);
     log("timeout=" + timeout);
