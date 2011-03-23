@@ -125,21 +125,6 @@ public class ProxyWorker extends AuthorisedCasProxy implements Runnable {
         doingGet = false;
         index = 5;
         method = "HEAD";
-      } else if (buf[0] == (byte)'P' &&
-          buf[1] == (byte)'O' &&
-          buf[2] == (byte)'S' &&
-          buf[3] == (byte)'T' &&
-          buf[4] == (byte)' ') {
-        doingGet = false;
-        index = 5;
-        method = "POST";
-      } else if (buf[0] == (byte)'P' &&
-          buf[1] == (byte)'U' &&
-          buf[3] == (byte)'T' &&
-          buf[4] == (byte)' ') {
-        doingGet = false;
-        index = 4;
-        method = "PUT";
       } else {
         /* we don't support this method */
 
