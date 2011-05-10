@@ -151,22 +151,25 @@ public class ProxyWorker extends AuthorisedCasProxy implements Runnable {
       log(method + " " + relativeUrl + ":");
       String targetUrl = "http://" + host + relativeUrl;
 
-      Tuple t = new CasProtectedResourceDownloader().download(targetUrl);
-      log("Status:" + t.status);
-      log("target:" + t.file);
-      if (t.status != HTTP_OK)
-        if (t.status == HTTP_NOT_FOUND)
+      String name = relativeUrl.substring(relativeUrl.lastIndexOf('/') + 1);
+      File file = new File(AuthorisedCasProxy.root, name);
+      
+      int status = CasProtectedResourceDownloader.downloadUrlToFile(targetUrl, file);
+      log("Status:" + status);
+      log("target:" + file);
+      if (status != HTTP_OK)
+        if (status == HTTP_NOT_FOUND)
           send404(responsePrintStream);
         else
-          sendException(responsePrintStream, new RuntimeException("Unexpected status " + t.status));
+          sendException(responsePrintStream, new RuntimeException("Unexpected status " + status));
 
-      if (!t.file.exists()) {
+      if (!file.exists()) {
         send404(responsePrintStream);
       } else {
 
-        printHeaders(t.file, responsePrintStream);
+        printHeaders(file, responsePrintStream);
         if (doingGet) {
-          sendFile(t.file, responsePrintStream);
+          sendFile(file, responsePrintStream);
         }
       }
     } finally {
