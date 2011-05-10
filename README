@@ -8,9 +8,9 @@ java -jar target/authorised-cas-proxy-1.0-jar-with-dependencies.jar \
   -host cloud1.cggh.org \
   -ticketGrantingServiceUrl http://cloud1.cggh.org/sso/v1/tickets 
 
-http://localhost:7777/repository/service/content/studies/QXBQG
+http://localhost:7777/repository/service/content/studies/ZAZBM
 
 now returns the contents of 
 
-http://cloud1.cggh.org/repository/service/content/studies/QXBQG
+http://cloud1.cggh.org/repository/service/content/studies/ZAZBM
 
